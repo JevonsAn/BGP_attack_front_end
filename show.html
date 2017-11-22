@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>展示页</title>
+    <title>攻击结果</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="AYH">
     <link href="static/assets/css/bootstrap.css" rel="stylesheet">
@@ -18,7 +18,7 @@
     <style>
 
     .links line {
-      stroke: #999;
+      stroke: #333;
       stroke-opacity: 0.6;
     }
 
@@ -60,7 +60,7 @@
             <li class="active"><a href="/" target="_blank">拓扑图</a><span class="divider">|</span></li>
             <li class="active"><a href="/form" target="_blank">攻击表单</a><span class="divider">|</span></li>
             <li class="active"><a href="xielou" target="_blank">BGP泄漏</a><span class="divider">|</span></li>
-            <li class="active">攻击效果</li> 
+            <li class="active"><a href="pinggraph" target="_blank">Ping</a></li> 
           </ul>
           <h2 class="heading">
                 当前攻击状态                
@@ -90,65 +90,29 @@
                     <p class="control-p">间隔时间 : {{escape(params[7])}}ms</p>
                     <p class="control-p">一个包的负载大小 : {{escape(params[8])}}byte</p>
                     <p class="control-p">攻击峰值 : {{escape(params[9])}}Mbit/s</p>
-                    <p id="status">hh</p>
                   </div>
               </div>
             </div>
           </div>
           <div class="widget widget-padding span9" style="margin-top: 20px;margin-bottom: 20px;">
-          <div class="widget-header">
-            <i class="icon-credit-card"></i>
-            <h5>Ping</h5>
-            <div class="widget-buttons">
-                <a href="javascript:void(0)" class="collapse" data-collapsed="false"><i data-title="Collapse" class="icon-chevron-up"></i></a>
+            <div class="widget-header">
+              <i class="icon-list-alt"></i><h5>拓扑图</h5>
+              <div class="widget-buttons">
+                  <a href="#" data-title="Collapse" data-collapsed="false" class="tip collapse"><i class="icon-chevron-up"></i></a>
+              </div>
             </div>
-          </div>
-          <div class="widget-body clearfix">
-            
-              <!-- <form class="form-inline">
-                <input type="text" class="span4" placeholder="Email">
-                <input type="password" class="span4" placeholder="Password">
-                <button type="submit" class="btn btn-success">Sign in</button>
-              </form> -->
-              <div class="span1"></div>
-              <form class="form-inline span10" style="margin-top: 15px;">
-                <div class="input-append">
-                  <span class="add-on">从</span><input type="text" id="ping2ip1" placeholder="发起ping的ip">
-                </div>
-                <!-- <input type="text" class="span4" placeholder="Username"> -->
-                <div class="input-append">
-                  <span class="add-on">到</span><input type="text" id="ping2ip2" placeholder="ping的目的地址">
-                </div>
-                <button class="btn btn-primary" type="button" onclick="startping1();">Ping</button>
-                <button class="btn btn-primary" type="button" onclick="stopping1();">停止</button>
-              </form>
-              <div class="span1"></div>
-
-              <!-- 从<input type="text" name="ip1">到<input type="text" name="ip2"><input type="button" value="开始"> -->
-            
-            <div style="height:300px;" id="graph" class="widget-analytics-large">
-              
+            <div class="widget-body">
+              <svg width="750" height="580">
+                 
+              </svg>
+              <!-- <svg width="1000" height="600">
+                 <rect fill="none" stroke="#999" 
+                      x="0" y="0" width="998" height="598"/>
+              </svg> -->
             </div>
           </div>
           
-          <div class="widget-body clearfix" style="">
-            <div class="span1"></div>
-              <form class="form-inline span10" style="margin-top: 15px;">
-                <div class="input-append">
-                  <span class="add-on">从</span><input type="text" id="ping2ip3" placeholder="发起ping的ip">
-                </div>
-                <!-- <input type="text" class="span4" placeholder="Username"> -->
-                <div class="input-append">
-                  <span class="add-on">到</span><input type="text" id="ping2ip4" placeholder="ping的目的地址">
-                </div>                
-                <button class="btn btn-primary" type="button" onclick="startping2();">Ping</button>
-                <button class="btn btn-primary" type="button" onclick="stopping2();">停止</button>
-              </form>
-              <div class="span1"></div>
-            <div style="height:300px;" id="graph2" class="widget-analytics-large">
-              
-            </div>
-          </div>
+
         </div>
         </div>  
         
@@ -170,254 +134,178 @@
     <script type='text/javascript' src='static/assets/js/fullcalendar.min.js'></script>
     <script type='text/javascript' src='static/assets/js/jquery.gritter.min.js'></script>
     <script type="text/javascript" src="static/assets/js/realm.js"></script>
-    <script type="text/javascript" src="static/assets/js/jquery.slimscroll.min.js"></script>
-  
+    <script type="text/javascript" src="static/assets/js/jquery.slimscroll.min.js"></script>  
     <script type="text/javascript" src="static/assets/js/select2.min.js"></script>
     <script type="text/javascript" src="static/assets/js/bootstrap-colorpicker.js"></script>
     <script type="text/javascript" src="static/assets/js/bootstrap-datepicker.js"></script>
     <script type="text/javascript" src="static/assets/js/bootstrap-timepicker.js"></script>
-    <script src="static/dist/echarts.js"></script>
-    <script type="text/javascript">var timeTicket;var timeTicket2;var pingstart=0;var pingstart2=0;</script>
-    <script type="text/javascript">
-      function startping1() {
-        var xmlhttp;
-        if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
-          xmlhttp=new XMLHttpRequest();
-        }
-        else{// code for IE6, IE5
-          xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        xmlhttp.open("GET","pingstart?ip1="+document.getElementById("ping2ip1").value+"&ip2="+document.getElementById("ping2ip2").value,true);
-        xmlhttp.send();
-        pingstart = 1;
-      };
-      function startping2() {
-        var xmlhttp;
-        if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
-          xmlhttp=new XMLHttpRequest();
-        }
-        else{// code for IE6, IE5
-          xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        xmlhttp.open("GET","pingstart?ip1="+document.getElementById("ping2ip3").value+"&ip2="+document.getElementById("ping2ip4").value,true);
-        xmlhttp.send();
-        pingstart2 = 1;
-      };
-      function stopping1(argument) {
-        pingstart=0;
-      };
-      function stopping2(argument) {
-        pingstart2=0;
-      };
-    </script>
-    <script type="text/javascript">
-        require.config({
-            paths: {
-                echarts: 'static/dist'
+
+    <script src="static/assets/js/d3.js"></script>
+    <script>
+
+      var svg = d3.select("svg"),
+          width = +svg.attr("width"),
+          height = +svg.attr("height");
+
+      var color = d3.scaleOrdinal(d3.schemeCategory20);
+   
+      var simulation = d3.forceSimulation()
+          .force("link", d3.forceLink().id(function(d) { return d.id; }))
+          .force("charge", d3.forceManyBody().strength([-100]))
+          .force("center", d3.forceCenter(width / 2, height / 2));
+
+      d3.json("myjson2", function(error, graph) {
+        if (error) throw error;
+
+        var link = svg.append("g")
+            .attr("class", "links")
+          .selectAll("line")
+          .data(graph.links)
+          .enter().append("line")
+            .attr("stroke-width", function(d) { return 3; });//Math.sqrt(d.value);
+        
+        var radius = 3;
+
+        d3.selectAll("line").on("click",function(d) {
+              if (d.click==0) {
+                d3.select(this).style("stroke","#DC143C");
+                d.click=1;
+              }
+              else {
+                d3.select(this).style("stroke","#333");
+                d.click=0;
+              }
+              
+            });
+
+        var node = svg.selectAll(".node")
+                      .data(graph.nodes)
+                    .enter().append("g")
+                      .attr("class", "node");                    
+
+
+        node.append("image")
+            .attr("xlink:href",function(d) {
+              if (d.type == "host_attack" ||  d.type == "host_control" ||    d.type == "host_js" ||    d.type == "router_attack" ||    d.type == "BGP-router_attack" ){
+                s = "static/" + d.type +".gif";
+              }
+              else{
+                s = "static/" + d.type +".png";
+              }
+              return s;
+            })
+            .attr("width","20")
+            .attr("height","20")
+            .call(d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended));
+
+        
+        // img = svg.selectAll("image").
+
+        node.append("title")
+          .text(function (d) {
+            s = "IP地址 : ";
+            if (d.type == "host" || d.type == "host_control" || d.type == "host_js" || d.type == "host_attack"){
+              s += d.ip+"\n";
             }
-        });
-        require(
-            [
-                'echarts',
-                'echarts/chart/line',   // 按需加载所需图表，如需动态类型切换功能，别忘了同时加载相应图表
-                'echarts/chart/bar'
-            ],
-            function (ec) {
-                var myChart = ec.init(document.getElementById('graph'));
-                var option = {
-                    tooltip : {
-                        trigger: 'axis'
-                    },
-                    dataZoom : {
-                        show : false,
-                        start : 0,
-                        end : 100
-                    },
-                    xAxis : [
-                        {
-                            type : 'category',
-                            boundaryGap : true,
-                            data : (function (){
-                                var now = new Date();
-                                var res = [];                                
-                                var len = 1;
-                                while (len--) {
-                                    res.unshift(now.toLocaleTimeString().replace(/^\D*/,''));
-                                    now = new Date(now);
-                                }
-                                return res;
-                            })()
-                        }
-                    ],
-                    yAxis : [
-                        {
-                            type : 'value',
-                            scale: true,
-                            name : 'RTT',
-                            boundaryGap: [0.2, 0.2]
-                        }//,                        
-                    ],
-                    series : [                    
-                        {
-                            name:'RTT',
-                            type:'bar',
-                            data:(function (){
-                                var res = [0];
-                                return res;
-                            })()
-                        }
-                    ]
-                };
-                var lastData = 11;
-                var axisData;
-                var fso, ts, s ; 
-                var ForReading = 1;
-                var rtt = 1;                 
-                var xmlhttp;
-                if (window.XMLHttpRequest)
-                {// code for IE7+, Firefox, Chrome, Opera, Safari
-                  xmlhttp=new XMLHttpRequest();
-                }
-                else
-                {// code for IE6, IE5
-                  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-                }
-                clearInterval(timeTicket);
-                timeTicket = setInterval(function (){
-                  if (pingstart==1){
-                    xmlhttp.open("GET","ping?graph=1",true);
-                    xmlhttp.send();
-                    
-                    xmlhttp.onreadystatechange=function()
-                    {
-                        if ((xmlhttp.readyState==4 && xmlhttp.status==200) || (xmlhttp.status==304 && xmlhttp.readyState==1))
-                        {
-                           rtt=xmlhttp.responseText;
-                        }
-                    }
-                    axisData = (new Date()).toLocaleTimeString().replace(/^\D*/,'');
-                    lastData = parseFloat(rtt);
-                    
-                    // 动态数据接口 addData
-                    myChart.addData([
-                        [
-                            0,        // 系列索引
-                            lastData, // 新增数据
-                            false,    // 新增数据是否从队列头部插入
-                            true,    // 是否增加队列长度，false则自定删除原有数据，队头插入删队尾，队尾插入删队头
-                            axisData  // 坐标轴标签
-                        ]
-                    ]);
-                  }
-                }, 1200);
-            myChart.setOption(option);
+            else{
+              s += d.ip[0] +"\n";
+              for (var i = 1; i <= d.ip.length - 1; i++) {
+                 s += "\t" + d.ip[i] + "\n";
+              }
             }
-            
-        );
-    </script>
-    <script type="text/javascript">
-       require.config({
-            paths: {
-                echarts: 'static/dist'
+            s+="ASN : " + d.ASN;
+            if (("asname" in d )&&("prefix" in d)){
+              s +="\nAS名称 : " + d.asname + "\n声明前缀 : " + d.prefix;
             }
-        });
-        require(
-            [
-                'echarts',
-                'echarts/chart/line',   // 按需加载所需图表，如需动态类型切换功能，别忘了同时加载相应图表
-                'echarts/chart/bar'
-            ],
-            function (ec) {
-                var myChart = ec.init(document.getElementById('graph2'));
-                var option = {
-                    tooltip : {
-                        trigger: 'axis'
-                    },
-                    dataZoom : {
-                        show : false,
-                        start : 0,
-                        end : 100
-                    },
-                    xAxis : [
-                        {
-                            type : 'category',
-                            boundaryGap : true,
-                            data : (function (){
-                                var now = new Date();
-                                var res = [];                                
-                                var len = 1;
-                                while (len--) {
-                                    res.unshift(now.toLocaleTimeString().replace(/^\D*/,''));
-                                    now = new Date(now);
-                                }
-                                return res;
-                            })()
-                        }
-                    ],
-                    yAxis : [
-                        {
-                            type : 'value',
-                            scale: true,
-                            name : 'RTT',
-                            boundaryGap: [0.2, 0.2]
-                        }//,                        
-                    ],
-                    series : [                    
-                        {
-                            name:'RTT',
-                            type:'bar',
-                            data:(function (){
-                                var res = [0];
-                                return res;
-                            })()
-                        }
-                    ]
-                };
-                var lastData = 11;
-                var axisData;
-                var fso, ts, s ; 
-                var ForReading = 1;
-                var rtt = 1;                 
-                var xmlhttp;
-                if (window.XMLHttpRequest)
-                {// code for IE7+, Firefox, Chrome, Opera, Safari
-                  xmlhttp=new XMLHttpRequest();
-                }
-                else
-                {// code for IE6, IE5
-                  xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-                }
-                clearInterval(timeTicket2);
-                timeTicket2 = setInterval(function (){
-                  if (pingstart2==1){
-                    xmlhttp.open("GET","ping?graph=2",true);
-                    xmlhttp.send();
-                    
-                    xmlhttp.onreadystatechange=function()
-                    {
-                        if ((xmlhttp.readyState==4 && xmlhttp.status==200) || (xmlhttp.status==304 && xmlhttp.readyState==1))
-                        {
-                           rtt=xmlhttp.responseText;
-                        }
-                    }
-                    axisData = (new Date()).toLocaleTimeString().replace(/^\D*/,'');
-                    lastData = parseFloat(rtt);
-                    
-                    // 动态数据接口 addData
-                    myChart.addData([
-                        [
-                            0,        // 系列索引
-                            lastData, // 新增数据
-                            false,    // 新增数据是否从队列头部插入
-                            true,    // 是否增加队列长度，false则自定删除原有数据，队头插入删队尾，队尾插入删队头
-                            axisData  // 坐标轴标签
-                        ]
-                    ]);
-                  }
-                }, 1200);
-            myChart.setOption(option);
-            }
-        );
+            return s;
+          });
+
+        node.append("rect")
+            .attr("width",70)
+            .attr("height",9)
+            .attr("fill","white")
+
+        node.append("text")
+            .attr("dx", 12)
+            .attr("dy", 10)
+            .attr("id", function(d) { 
+              return d.name;
+            })
+            .attr("style","background-color:white;opacity:1;")
+            .style("text-anchor", "middle")
+            .style("fill", "#444")
+            .style("font-family", "Arial")
+            .style("font-size", 9)
+
+            .text(function(d) { 
+              if (d.type == "host" || d.type == "host_control" || d.type == "host_js" || d.type == "host_attack")
+              {
+                return d.ASN+":"+d.ip;
+              }
+              else if (d.type == "switch"){
+                return " ";
+              }
+              else{
+                return d.ASN+":"+d.ip[0];
+              }
+            });
+
+        simulation
+            .nodes(graph.nodes)
+            .on("tick", ticked);
+
+        simulation.force("link")
+            .links(graph.links);
+
+        function ticked() {
+          link
+              .attr("x1", function(d) { return d.source.x; })
+              .attr("y1", function(d) { return d.source.y; })
+              .attr("x2", function(d) { return d.target.x; })
+              .attr("y2", function(d) { return d.target.y; });
+
+          node.selectAll("image")
+              .attr("x", function(d) { d.x = Math.max(radius, Math.min(width - radius, d.x)); return d.x-10; })
+              .attr("y", function(d) { d.y = Math.max(radius, Math.min(height - radius, d.y)); return d.y-10; });
+          node.selectAll("text")
+              .attr("x", function(d) { d.x = Math.max(radius, Math.min(width - radius, d.x)); return d.x-20; })
+              .attr("y", function(d) { d.y = Math.max(radius, Math.min(height - radius, d.y)); return d.y-20; });
+          node.selectAll("rect")
+              .attr("x", function(d) { d.x = Math.max(radius, Math.min(width - radius, d.x)); return d.x-40; })
+              .attr("y", function(d) { d.y = Math.max(radius, Math.min(height - radius, d.y)); return d.y-18; });
+        }
+
+      });
+
+      function dragstarted(d) {
+        if (!d3.event.active) {
+          simulation.alphaTarget(0.3).restart();
+          
+        }
+        d.fx = d.x;
+        d.fy = d.y;
+        
+      }
+
+      function dragged(d) {
+        if (!d3.event.active) {
+          d.fx = d3.event.x;
+          d.fy = d3.event.y;
+        }
+        d.fx = d3.event.x;
+        d.fy = d3.event.y;
+      }
+
+      function dragended(d) {
+        if (!d3.event.active) {
+          simulation.alphaTarget(0);        
+        }
+        d.fx = d.x;
+        d.fy = d.y;
+      }
     </script>
   </body>
 </html>

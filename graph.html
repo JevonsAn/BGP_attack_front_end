@@ -60,7 +60,7 @@
             <li class="active">拓扑图<span class="divider">|</span></li>
             <li class="active"><a href="/form" target="_blank">攻击表单</a><span class="divider">|</span></li>
             <li class="active"><a href="xielou" target="_blank">BGP泄漏</a><span class="divider">|</span></li>
-            <li class="active"><a href="show" target="_blank">攻击效果</a></li> 
+            <li class="active"><a href="pinggraph" target="_blank">Ping</a></li> 
           </ul>
           <h2 class="heading">
                 攻击BGP路由器
@@ -118,11 +118,11 @@
     <script type='text/javascript' src='static/assets/js/fullcalendar.min.js'></script>
     <script type='text/javascript' src='static/assets/js/jquery.gritter.min.js'></script>
     <script type="text/javascript" src="static/assets/js/realm.js"></script>
-
     <script type="text/javascript" src="static/assets/js/select2.min.js"></script>
     <script type="text/javascript" src="static/assets/js/bootstrap-colorpicker.js"></script>
     <script type="text/javascript" src="static/assets/js/bootstrap-datepicker.js"></script>
     <script type="text/javascript" src="static/assets/js/bootstrap-timepicker.js"></script>
+
     <script src="static/assets/js/d3.js"></script>
     <script>
 
@@ -178,12 +178,13 @@
           // .attr("y", "-8px")
           .attr("width","20")
           .attr("height","20")
-          .on("click",function(d) {
+          .on("click",function(d) {            
             if (d.click==0) {
               d3.select(this).attr("xlink:href",function(d) { 
                 s = "static/" + d.type + "_attack" +".png"
                 return s; 
               })
+              d3.select("#"+d.id).style("font-size", 15);
               d.click=1;
             }
             else {
@@ -191,6 +192,7 @@
                 s = "static/" + d.type +".png"
                 return s; 
               })
+              d3.select("#"+d.id).style("font-size", 9);
               d.click=0;
             }
           })
@@ -209,9 +211,19 @@
 
       node.append("title")
           .text(function (d) {
-            s = "IP地址 : "+ d.ip +"\nASN : " + d.ASN ;
+            s = "IP地址 : ";
+            if (d.type == "host"){
+              s += d.ip+"\n";
+            }
+            else{
+              s += d.ip[0] +"\n";
+              for (var i = 1; i <= d.ip.length - 1; i++) {
+                 s += "\t" + d.ip[i] + "\n";
+              }
+            }
+            s+="ASN : " + d.ASN;
             if (("asname" in d )&&("prefix" in d)){
-              s +="\nAS名称 : " + d.asname + "\n前缀 : " + d.prefix;
+              s +="\nAS名称 : " + d.asname + "\n声明前缀 : " + d.prefix;
             }
             return s;
           });
@@ -224,6 +236,9 @@
       node.append("text")
           .attr("dx", 12)
           .attr("dy", 10)
+          .attr("id", function(d) { 
+            return d.id;
+          })
           .attr("style","background-color:white;opacity:1;")
           .style("text-anchor", "middle")
           .style("fill", "#444")
@@ -269,18 +284,6 @@
             .attr("y", function(d) { d.y = Math.max(radius, Math.min(height - radius, d.y)); return d.y-18; });
       }
 
-      // node.on("mouseover", function(){
-      //   d.
-      // });
-      
-      // link.on("click",function(){
-      //     var body=d3.selectAll(body);
-      //     body.append("p").text(function (d) {
-      //       s = d.source;
-      //       return s;});
-      //     d3.select(this)
-      //         .attr("fill","red");
-      // });
     });
 
     function dragstarted(d) {

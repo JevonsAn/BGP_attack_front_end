@@ -209,8 +209,12 @@
 
       node.append("title")
           .text(function (d) {
-            s = "IP地址："+ d.ip +"\nASN:" + d.ASN;
-            return s;});
+            s = "IP地址 : "+ d.ip +"\nASN : " + d.ASN ;
+            if (("asname" in d )&&("prefix" in d)){
+              s +="\nAS名称 : " + d.asname + "\n前缀 : " + d.prefix;
+            }
+            return s;
+          });
 
       node.append("rect")
           .attr("width",70)

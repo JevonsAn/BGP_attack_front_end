@@ -3,16 +3,32 @@ import tornado.web
 import tornado.ioloop
 import os
 import json
+import random
 from peijson import nodes, links, iprr_name, json_str, path_peizhi
 
 canshu = {}
 
 
+class Ping2Handler(tornado.web.RequestHandler):
+
+    def get(self):
+
+        self.write(str(1))
+
+
 class PinHandler(tornado.web.RequestHandler):
 
     def get(self):
+        graph = self.get_argument("graph")
+
         try:
-            fpin = open("peizhi/ping.txt", "r")
+            if graph == "1":
+                fpin = open("peizhi/ping.txt", "r")
+            elif graph == "2":
+                fpin = open("peizhi/ping.txt", "r")
+            else:
+                fpin = open("peizhi/ping.txt", "r")
+
             ping = fpin.readlines()[-1].strip()
             icmp_sep = ping.split(" ")[4].split("=")[-1]
             rtt = ping.split(" ")[6].split("=")[-1]
@@ -28,16 +44,17 @@ class PinHandler(tornado.web.RequestHandler):
             rtt = "0"
         finally:
             fpin.close()
-        self.write(rtt)
-        # self.write(ping)
+        # self.write(rtt)
+        self.write(str(random.uniform(0, 2)))
 
 
-class Ping2Handler(tornado.web.RequestHandler):
+class PingstartHandler(tornado.web.RequestHandler):
 
     def get(self):
         ip1 = self.get_argument("ip1")
         ip2 = self.get_argument("ip2")
-        self.write("ip1:"+ip1+"\nip2:"+ip2)
+        print("ip1:"+ip1+"\nip2:"+ip2)
+        self.write(str(random.uniform(0, 2)))
 
 
 class JsoHandler(tornado.web.RequestHandler):
@@ -186,7 +203,8 @@ application = tornado.web.Application([
     (r"/myjson", JsoHandler),
     (r"/myjson2", JsoHandler2),
     (r"/ping", PinHandler),
-    (r"/ping2", Ping2Handler)
+    (r"/ping2", Ping2Handler),
+    (r"/pingstart", PingstartHandler)
 
 ], **settings)
 

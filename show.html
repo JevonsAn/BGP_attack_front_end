@@ -90,6 +90,7 @@
                     <p class="control-p">间隔时间 : {{escape(params[7])}}ms</p>
                     <p class="control-p">一个包的负载大小 : {{escape(params[8])}}byte</p>
                     <p class="control-p">攻击峰值 : {{escape(params[9])}}Mbit/s</p>
+                    <p id="status">hh</p>
                   </div>
               </div>
             </div>
@@ -118,8 +119,8 @@
                 <div class="input-append">
                   <span class="add-on">到</span><input type="text" id="ping2ip2" placeholder="ping的目的地址">
                 </div>
-                <button class="btn btn-primary" onclick="startping1();">Ping</button>
-                <button class="btn btn-primary" onclick="stopping1();">停止</button>
+                <button class="btn btn-primary" type="button" onclick="startping1();">Ping</button>
+                <button class="btn btn-primary" type="button" onclick="stopping1();">停止</button>
               </form>
               <div class="span1"></div>
 
@@ -140,8 +141,8 @@
                 <div class="input-append">
                   <span class="add-on">到</span><input type="text" id="ping2ip4" placeholder="ping的目的地址">
                 </div>                
-                <button class="btn btn-primary" onclick="startping2();">Ping</button>
-                <button class="btn btn-primary" onclick="stopping2();">停止</button>
+                <button class="btn btn-primary" type="button" onclick="startping2();">Ping</button>
+                <button class="btn btn-primary" type="button" onclick="stopping2();">停止</button>
               </form>
               <div class="span1"></div>
             <div style="height:300px;" id="graph2" class="widget-analytics-large">
@@ -176,7 +177,7 @@
     <script type="text/javascript" src="static/assets/js/bootstrap-datepicker.js"></script>
     <script type="text/javascript" src="static/assets/js/bootstrap-timepicker.js"></script>
     <script src="static/dist/echarts.js"></script>
-    <script type="text/javascript">var timeTicket;var pingstart=0;var pingstart2=0;</script>
+    <script type="text/javascript">var timeTicket;var timeTicket2;var pingstart=0;var pingstart2=0;</script>
     <script type="text/javascript">
       function startping1() {
         var xmlhttp;
@@ -186,10 +187,10 @@
         else{// code for IE6, IE5
           xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
         }
-        xmlhttp.open("GET","pingstart?ip1="+getElementById("ping2ip1").innerHTML+"&ip2="+getElementById("ping2ip2").innerHTML,true);
+        xmlhttp.open("GET","pingstart?ip1="+document.getElementById("ping2ip1").value+"&ip2="+document.getElementById("ping2ip2").value,true);
         xmlhttp.send();
         pingstart = 1;
-      }
+      };
       function startping2() {
         var xmlhttp;
         if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
@@ -198,16 +199,16 @@
         else{// code for IE6, IE5
           xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
         }
-        xmlhttp.open("GET","pingstart?ip1="+getElementById("ping2ip3").innerHTML+"&ip2="+getElementById("ping2ip4").innerHTML,true);
+        xmlhttp.open("GET","pingstart?ip1="+document.getElementById("ping2ip3").value+"&ip2="+document.getElementById("ping2ip4").value,true);
         xmlhttp.send();
         pingstart2 = 1;
-      }
+      };
       function stopping1(argument) {
         pingstart=0;
-      }
+      };
       function stopping2(argument) {
         pingstart2=0;
-      }
+      };
     </script>
     <script type="text/javascript">
         require.config({
@@ -284,7 +285,7 @@
                 clearInterval(timeTicket);
                 timeTicket = setInterval(function (){
                   if (pingstart==1){
-                    xmlhttp.open("GET","ping",true);
+                    xmlhttp.open("GET","ping?graph=1",true);
                     xmlhttp.send();
                     
                     xmlhttp.onreadystatechange=function()
@@ -386,10 +387,10 @@
                 {// code for IE6, IE5
                   xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
                 }
-                clearInterval(timeTicket);
-                timeTicket = setInterval(function (){
+                clearInterval(timeTicket2);
+                timeTicket2 = setInterval(function (){
                   if (pingstart2==1){
-                    xmlhttp.open("GET","ping",true);
+                    xmlhttp.open("GET","ping?graph=2",true);
                     xmlhttp.send();
                     
                     xmlhttp.onreadystatechange=function()
